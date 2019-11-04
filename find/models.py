@@ -10,7 +10,7 @@ class Query(models.Model):
 
 
 class Fasta(models.Model):
-    accession = models.CharField(max_length=15)
+    accession = models.CharField(max_length=20, primary_key=True)
     description = models.CharField(max_length=255)
     sequence = models.TextField()
     source = models.CharField(max_length=255)
