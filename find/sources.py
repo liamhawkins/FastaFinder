@@ -1,16 +1,14 @@
 import re
-from collections import namedtuple
 
 import requests
+
+from find.models import Fasta
 
 headers = None  # TODO: Implement proper headers
 
 
 class SequenceNotFoundError(Exception):
     pass
-
-
-FastaSeq = namedtuple("Fasta", ["description", "sequence", "source", "accession"])
 
 
 class Uniprot:
@@ -31,16 +29,30 @@ class Uniprot:
             content = response.content.decode("utf-8").split("\n")
             description = content[0]
             sequence = "".join(content[1:])
-            return FastaSeq(
-                description=description,
-                sequence=sequence,
-                source=source,
-                accession=accession,
-            )
+            fasta, _ = Fasta.objects.get_or_create(description=description, sequence=sequence, source=source, accession=accession)
+            return fasta
 
 
-if __name__ == "__main__":
-    query = "B7NR61"
-    if Uniprot.is_valid(query):
-        fs = Uniprot.get(query)
-        print("test")
+class NCBI:
+    REGEX = r'[A-Z]{1,2}_?[0-9]{4,10}\.?[0-9]{1,2}'
+    URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db={}&id={}&rettype=fasta&retmode=text'
+
+    @classmethod
+    def is_valid(cls, query):
+        return bool(re.match(cls.REGEX, query))
+
+    @classmethod
+    def get(cls, accession):
+        source = cls.URL.format('protein', accession)
+        response = requests.get(source, headers=headers)
+        if response.status_code in [404, 400]:
+            source = cls.URL.format('nuccore', accession)
+            response = requests.get(source, headers=headers)
+            if response.status_code in [404, 400]:
+                raise SequenceNotFoundError("No sequence found in Uniprot: {}".format(accession))
+
+        content = response.content.decode("utf-8").split("\n")
+        description = content[0]
+        sequence = "".join(content[1:])
+        fasta, _ = Fasta.objects.get_or_create(description=description, sequence=sequence, source=source, accession=accession)
+        return fasta
