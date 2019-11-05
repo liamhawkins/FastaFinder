@@ -38,6 +38,6 @@ def query(request, raw_query=None):
         fasta = get_fasta(raw_query)
         query, _ = Query.objects.get_or_create(raw_query=raw_query, fasta=fasta, user=user)
         if query.fasta:
-            return HttpResponse("{}\n{}\n{}".format(query.fasta.source, query.fasta.description, query.fasta.sequence))
+            return HttpResponse("Source:</br>{}</br></br>Fasta:</br>{}</br>{}".format(query.fasta.source, query.fasta.description.replace('>', '&gt'), query.fasta.sequence))
         else:
             return HttpResponse("No fasta found for query: {}".format(raw_query))
