@@ -2,9 +2,9 @@ from django.http import HttpResponse
 from ipware import get_client_ip
 
 from find.models import User, Query, Fasta
-from find.sources import Uniprot, SequenceNotFoundError, NCBI
+from find.sources import Uniprot, SequenceNotFoundError, NCBI, Mirbase, MicroRNA
 
-sources = [Uniprot, NCBI]
+sources = [Uniprot, Mirbase, MicroRNA, NCBI]
 
 
 def log_user(request):

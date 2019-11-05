@@ -20,3 +20,8 @@ class User(models.Model):
     first_time_queried = models.DateTimeField(auto_now_add=True)
     most_recent_time_queried = models.DateTimeField(auto_now=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
+
+
+class MicroRNAAlias(models.Model):
+    alias = models.CharField(max_length=25, primary_key=True)
+    accession = models.CharField(max_length=15)
