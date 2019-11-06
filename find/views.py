@@ -11,21 +11,26 @@ def log_user(request):
     ip, is_routable = get_client_ip(request)
     user, created = User.objects.get_or_create(ip=ip)
     if not created:
+        user.num_queries += 1
         user.save()
     return user
 
 
 def get_fasta(query):
     try:
-        return Fasta.objects.get(accession=query)
+        fasta = Fasta.objects.get(accession=query)
     except Fasta.DoesNotExist:
-        pass
+        fasta = None
     for source in sources:
         if source.is_valid(query):
             try:
-                return source.get(query)
+                if fasta:
+                    print('returning {}.get(fasta=fasta)'.format(source.SOURCE))
+                    return source.get(fasta=fasta)
+                else:
+                    return source.get(accession=query)
             except SequenceNotFoundError:
-                return None
+                return None, None, None
 
 
 def query(request, raw_query=None):
@@ -35,9 +40,12 @@ def query(request, raw_query=None):
     elif raw_query.startswith("NC_"):
         return HttpResponse("Genomes are not supported yet!")
     else:
-        fasta = get_fasta(raw_query)
-        query, _ = Query.objects.get_or_create(raw_query=raw_query, fasta=fasta, user=user)
-        if query.fasta:
-            return HttpResponse("Source:</br>{}</br></br>Fasta:</br>{}</br>{}".format(query.fasta.source, query.fasta.description.replace('>', '&gt'), query.fasta.sequence))
+        fasta, description, sequence = get_fasta(raw_query)
+        query, created = Query.objects.get_or_create(raw_query=raw_query, fasta=fasta, user=user)
+        if not created:
+            query.num_queries += 1
+            query.save()
+        if fasta:
+            return HttpResponse("Source:</br>{}</br></br>Fasta:</br>{}</br>{}".format(query.fasta.source, description.replace('>', '&gt'), sequence))
         else:
             return HttpResponse("No fasta found for query: {}".format(raw_query))
