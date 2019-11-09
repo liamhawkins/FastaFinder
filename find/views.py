@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 from ipware import get_client_ip
 
 from find.models import User, Query, Fasta
@@ -34,18 +35,20 @@ def get_fasta(query):
 
 
 def query(request, raw_query=None):
+    context = {
+        'raw_query': raw_query,
+        'fasta': None,
+        'source': None,
+        'description': None,
+        'sequence': None
+    }
     user = log_user(request)
-    if not raw_query:
-        return HttpResponse("Invalid Query")
-    elif raw_query.startswith("NC_"):
-        return HttpResponse("Genomes are not supported yet!")
-    else:
-        fasta, description, sequence = get_fasta(raw_query)
-        query, created = Query.objects.get_or_create(raw_query=raw_query, fasta=fasta, user=user)
+    if raw_query:
+        if not raw_query.startswith("NC_"):
+            context['fasta'], context['description'], context['sequence'] = get_fasta(raw_query)
+            print(context['description'])
+        query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta=context['fasta'], user=user)
         if not created:
             query.num_queries += 1
             query.save()
-        if fasta:
-            return HttpResponse("Source:</br>{}</br></br>Fasta:</br>{}</br>{}".format(query.fasta.source, description.replace('>', '&gt'), sequence))
-        else:
-            return HttpResponse("No fasta found for query: {}".format(raw_query))
+    return render(request, 'find/query.html', context)

@@ -1,0 +1,11 @@
+{% if 'NC_' in raw_query %}
+    <p>Genomes are not supported yet :(</p>
+{% elif fasta %}
+    <div>
+        <a href="{{ fasta.url }}"><h4>Source</h4></a>
+        <h4>Fasta:</h4>
+        <textarea rows="10" cols="80">{{ description }}&#10;{{ sequence }}</textarea>
+    </div>
+{% else %}
+ <p>No sequence available!</p>
+{% endif %}
