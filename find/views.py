@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from ipware import get_client_ip
 
-from find.models import User, Query, Fasta
+from find.models import User, Query, FastaSource
 from find.sources import Uniprot, SequenceNotFoundError, NCBI, Mirbase, MicroRNA
 
 sources = [Uniprot, Mirbase, MicroRNA, NCBI]
@@ -17,10 +17,14 @@ def log_user(request):
     return user
 
 
+def is_genome(raw_query):
+    return raw_query.startswith("NC_")
+
+
 def get_fasta(query):
     try:
-        fasta = Fasta.objects.get(accession=query)
-    except Fasta.DoesNotExist:
+        fasta = FastaSource.objects.get(accession=query)
+    except FastaSource.DoesNotExist:
         fasta = None
     for source in sources:
         if source.is_valid(query):
@@ -34,10 +38,6 @@ def get_fasta(query):
                 return None, None, None
         else:
             return None, None, None
-
-
-def is_genome(raw_query):
-    return raw_query.startswith("NC_")
 
 
 def log_query(context):

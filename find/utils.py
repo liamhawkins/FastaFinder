@@ -9,7 +9,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'FastaFinder.settings'
 django.setup()
 
 from find.models import MicroRNAAlias
-from find.sources import MicroRNA
 
 
 def update_microrna_aliases():

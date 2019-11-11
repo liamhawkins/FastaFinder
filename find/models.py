@@ -6,11 +6,11 @@ class Query(models.Model):
     most_recent_time_queried = models.DateTimeField(auto_now=True)
     num_queries = models.PositiveIntegerField(default=1)
     raw_query = models.CharField(max_length=50)
-    fasta = models.ForeignKey("Fasta", null=True, blank=True, on_delete=models.DO_NOTHING)
+    fasta = models.ForeignKey("FastaSource", null=True, blank=True, on_delete=models.DO_NOTHING)
     user = models.ForeignKey("User", related_name="user_queries", on_delete=models.DO_NOTHING)
 
 
-class Fasta(models.Model):
+class FastaSource(models.Model):
     accession = models.CharField(max_length=20, primary_key=True)
     url = models.CharField(max_length=255)
     source = models.CharField(max_length=20)

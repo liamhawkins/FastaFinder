@@ -2,7 +2,7 @@ import re
 
 import requests
 
-from find.models import Fasta, MicroRNAAlias
+from find.models import FastaSource, MicroRNAAlias
 
 headers = None  # TODO: Implement proper headers
 
@@ -34,7 +34,7 @@ class Uniprot:
             description = content[0]
             sequence = "".join(content[1:])
             if not fasta:
-                fasta, _ = Fasta.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
+                fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
             return fasta, description, sequence
 
 
@@ -64,7 +64,7 @@ class NCBI:
         description = content[0]
         sequence = "".join(content[1:])
         if not fasta:
-            fasta, _ = Fasta.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
+            fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
         return fasta, description, sequence
 
 
@@ -91,7 +91,7 @@ class Mirbase:
         description = content[1]
         sequence = content[2]
         if not fasta:
-            fasta, _ = Fasta.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
+            fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
         return fasta, description, sequence
 
 
