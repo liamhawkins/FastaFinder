@@ -11,6 +11,16 @@ class SequenceNotFoundError(Exception):
     pass
 
 
+class Fasta:
+    def __init__(self, desc, seq, fasta_source):
+        self.description = desc
+        self.sequence = seq
+        self.fasta_source = fasta_source
+
+    def to_dict(self):
+        return self.__dict__
+
+
 class Uniprot:
     REGEX = r"[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}"
     URL = "https://www.uniprot.org/uniprot/{}.fasta"
@@ -21,9 +31,9 @@ class Uniprot:
         return bool(re.match(cls.REGEX, query))
 
     @classmethod
-    def get(cls, accession=None, fasta=None):
-        if fasta:
-            url = fasta.url
+    def get(cls, accession=None, fasta_source=None):
+        if fasta_source:
+            url = fasta_source.url
         else:
             url = cls.URL.format(accession)
         response = requests.get(url, headers=headers)
@@ -33,9 +43,10 @@ class Uniprot:
             content = response.content.decode("utf-8").split("\n")
             description = content[0]
             sequence = "".join(content[1:])
-            if not fasta:
-                fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
-            return fasta, description, sequence
+            if not fasta_source:
+                fasta_source, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
+
+            return Fasta(description, sequence, fasta_source)
 
 
 class NCBI:
@@ -48,9 +59,9 @@ class NCBI:
         return bool(re.match(cls.REGEX, query))
 
     @classmethod
-    def get(cls, accession=None, fasta=None):
-        if fasta:
-            url = fasta.url
+    def get(cls, accession=None, fasta_source=None):
+        if fasta_source:
+            url = fasta_source.url
         else:
             url = cls.URL.format('protein', accession)
         response = requests.get(url, headers=headers)
@@ -63,10 +74,10 @@ class NCBI:
         content = response.content.decode("utf-8").split("\n")
         description = content[0]
         sequence = "".join(content[1:])
-        if not fasta:
-            fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
-        return fasta, description, sequence
+        if not fasta_source:
+            fasta_source, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
 
+        return Fasta(description, sequence, fasta_source)
 
 class Mirbase:
     REGEX = r'MI(MAT)?[0-9]{7}'
@@ -78,9 +89,9 @@ class Mirbase:
         return bool(re.match(cls.REGEX, query))
 
     @classmethod
-    def get(cls, accession=None, fasta=None):
-        if fasta:
-            url = fasta.url
+    def get(cls, accession=None, fasta_source=None):
+        if fasta_source:
+            url = fasta_source.url
         else:
             url = cls.URL.format(accession)
         response = requests.get(url, headers=headers)
@@ -90,9 +101,10 @@ class Mirbase:
 
         description = content[1]
         sequence = content[2]
-        if not fasta:
-            fasta, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
-        return fasta, description, sequence
+        if not fasta_source:
+            fasta_source, _ = FastaSource.objects.get_or_create(url=url, accession=accession, source=cls.SOURCE)
+
+        return Fasta(description, sequence, fasta_source)
 
 
 class MicroRNA:
@@ -103,9 +115,9 @@ class MicroRNA:
         return bool(re.match(cls.REGEX, query))
 
     @classmethod
-    def get(cls, accession=None, fasta=None):
-        if fasta:
-            return Mirbase.get(fasta=fasta)
+    def get(cls, accession=None, fasta_source=None):
+        if fasta_source:
+            return Mirbase.get(fasta_source=fasta_source)
         try:
             mirbase_accession = MicroRNAAlias.objects.get(alias=accession.lower()).accession
             return Mirbase.get(accession=mirbase_accession)

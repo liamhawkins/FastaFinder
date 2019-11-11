@@ -1,10 +1,10 @@
-{% if not raw_query or fasta is None %}
-    <p>No sequence available!</p>
-{% elif is_genome %}
+{% if is_genome %}
     <p>Genomes are not supported yet :(</p>
+{% elif not raw_query or fasta_source is None %}
+    <p>No sequence available!</p>
 {% else %}
     <div>
-        <a href="{{ fasta.url }}"><h4>Source</h4></a>
+        <a href="{{ fasta_source.url }}"><h4>Source</h4></a>
         <h4>Fasta:</h4>
         <textarea rows="10" cols="80">{{ description }}&#10;{{ sequence }}</textarea>
     </div>

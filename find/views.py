@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 from ipware import get_client_ip
 
@@ -23,25 +22,17 @@ def is_genome(raw_query):
 
 def get_fasta(query):
     try:
-        fasta = FastaSource.objects.get(accession=query)
+        fasta_source = FastaSource.objects.get(accession=query)
     except FastaSource.DoesNotExist:
-        fasta = None
+        fasta_source = None
+
     for source in sources:
         if source.is_valid(query):
-            try:
-                if fasta:
-                    print('returning {}.get(fasta=fasta)'.format(source.SOURCE))
-                    return source.get(fasta=fasta)
-                else:
-                    return source.get(accession=query)
-            except SequenceNotFoundError:
-                return None, None, None
-        else:
-            return None, None, None
+            return source.get(accession=query, fasta_source=fasta_source)
 
 
 def log_query(context):
-    query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta=context['fasta'], user=context['user'])
+    query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta_source=context['fasta_source'], user=context['user'])
     if not created:
         query.num_queries += 1
         query.save()
@@ -52,7 +43,7 @@ def query(request, raw_query=None):
         'user': log_user(request),
         'raw_query': raw_query,
         'is_genome': None,
-        'fasta': None,
+        'fasta_source': None,
         'source': None,
         'description': None,
         'sequence': None
@@ -63,6 +54,10 @@ def query(request, raw_query=None):
     elif is_genome(raw_query):
         context['is_genome'] = True
     else:
-        context['fasta'], context['description'], context['sequence'] = get_fasta(raw_query)
+        try:
+            fasta = get_fasta(raw_query)
+            context.update(fasta.to_dict())
+        except SequenceNotFoundError:
+            print('No sequence found for: {}'.format(raw_query))
         log_query(context)
     return render(request, 'find/query.html', context)
