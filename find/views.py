@@ -57,7 +57,7 @@ def query(request, raw_query=None):
         try:
             fasta = get_fasta(raw_query)
             context.update(fasta.to_dict())
-        except SequenceNotFoundError:
-            print('No sequence found for: {}'.format(raw_query))
+        except SequenceNotFoundError as e:
+            print(str(e))
         log_query(context)
     return render(request, 'find/query.html', context)
