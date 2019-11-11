@@ -32,23 +32,37 @@ def get_fasta(query):
                     return source.get(accession=query)
             except SequenceNotFoundError:
                 return None, None, None
+        else:
+            return None, None, None
+
+
+def is_genome(raw_query):
+    return raw_query.startswith("NC_")
+
+
+def log_query(context):
+    query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta=context['fasta'], user=context['user'])
+    if not created:
+        query.num_queries += 1
+        query.save()
 
 
 def query(request, raw_query=None):
     context = {
+        'user': log_user(request),
         'raw_query': raw_query,
+        'is_genome': None,
         'fasta': None,
         'source': None,
         'description': None,
         'sequence': None
     }
-    user = log_user(request)
-    if raw_query:
-        if not raw_query.startswith("NC_"):
-            context['fasta'], context['description'], context['sequence'] = get_fasta(raw_query)
-            print(context['description'])
-        query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta=context['fasta'], user=user)
-        if not created:
-            query.num_queries += 1
-            query.save()
+
+    if not raw_query:
+        context['raw_query'] = None
+    elif is_genome(raw_query):
+        context['is_genome'] = True
+    else:
+        context['fasta'], context['description'], context['sequence'] = get_fasta(raw_query)
+        log_query(context)
     return render(request, 'find/query.html', context)
