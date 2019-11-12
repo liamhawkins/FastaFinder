@@ -50,7 +50,7 @@ class Uniprot:
 
 
 class NCBI:
-    REGEX = r'[A-Z]{1,2}_?[0-9]{4,10}\.?[0-9]{1,2}'
+    REGEX = r'[A-Z]{1,2}_[0-9]{4,10}\.?[0-9]{1,2}'
     URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db={}&id={}&rettype=fasta&retmode=text'
     SOURCE = 'NCBI'
 
