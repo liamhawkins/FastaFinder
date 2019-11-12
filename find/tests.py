@@ -2,10 +2,10 @@ from django.test import TestCase
 
 # Create your tests here.
 from find.sources import Uniprot, NCBI, Mirbase, MicroRNA
-from find.views import sources
+from find.views import sources, is_genome
 
 
-class SourceRegexTestCase(TestCase):
+class SourceIsValidTestCase(TestCase):
     accessions = {
         Uniprot: ['P60709', 'P04797', 'Q28554', 'Q5RAB4', 'B7ZS96', 'A0A1L8GTR7'],
         NCBI: ['NP_002037.2', 'NP_001344872.1', 'NP_001344872', 'NM_001115114.1', 'NC_000012.12'],
@@ -28,3 +28,15 @@ class SourceRegexTestCase(TestCase):
         for accession in self.bad_accessions:
             for source in sources:
                 self.assertFalse(source.is_valid(accession))
+
+
+class ViewsTestCase(TestCase):
+    def test_is_genome(self):
+        genomes = ['NC_000012.12']
+        not_genomes = ['P60709']
+
+        for g in genomes:
+            self.assertTrue(is_genome(g))
+
+        for ng in not_genomes:
+            self.assertFalse(is_genome(ng))
