@@ -13,7 +13,9 @@ class SourceRegexTestCase(TestCase):
         MicroRNA: ['smc-miR-12455-5p', 'smc-mir-12455-1', 'ddi-mir-1176', 'hsa-let-7a-1', 'hsa-let-7a-5p'],
     }
 
-    def test(self):
+    bad_accessions = ['this_is_not_a_protein', '123123123', 'nc.cnd.sjfdkal', 'weeeeewooooweeeewooooo', '1=1 OR \'']
+
+    def test_real_accessions(self):
         for source, accessions in self.accessions.items():
             other_sources = [s for s in sources if s != source]
             for accession in accessions:
@@ -21,3 +23,8 @@ class SourceRegexTestCase(TestCase):
 
                 for other_source in other_sources:
                     self.assertFalse(other_source.is_valid(accession))
+
+    def test_bad_accessions(self):
+        for accession in self.bad_accessions:
+            for source in sources:
+                self.assertFalse(source.is_valid(accession))
