@@ -6,6 +6,24 @@
     <div>
         <a href="{{ fasta_source.url }}"><h4>Source</h4></a>
         <h4>Fasta:</h4>
-        <textarea rows="10" cols="80">{{ description }}&#10;{{ sequence }}</textarea>
+        <textarea class="fastaTextArea" rows="10" cols="80">{{ description }}&#10;{{ sequence }}</textarea>
+        <div>
+            <button class="copyButton" style="vertical-align:top;">Copy</button>
+        </div>
+        <script>
+            var copyTextareaBtn = document.querySelector('.copyButton');
+
+            copyTextareaBtn.addEventListener('click', function(event) {
+                var copyTextarea = document.querySelector('.fastaTextArea');
+                copyTextarea.focus();
+                copyTextarea.select();
+
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    console.log('Error copying text');
+                }
+            });
+        </script>
     </div>
 {% endif %}
