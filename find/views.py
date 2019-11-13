@@ -31,13 +31,6 @@ def get_fasta(query):
             return source.get(accession=query, fasta_source=fasta_source)
 
 
-def log_query(context):
-    query, created = Query.objects.get_or_create(raw_query=context['raw_query'], fasta_source=context['fasta_source'], user=context['user'])
-    if not created:
-        query.num_queries += 1
-        query.save()
-
-
 def query(request, raw_query=None):
     context = {
         'user': log_user(request),
@@ -59,5 +52,5 @@ def query(request, raw_query=None):
             context.update(fasta.to_dict())
         except SequenceNotFoundError as e:
             print(str(e))
-        log_query(context)
+        Query.objects.create(raw_query=context['raw_query'], fasta_source=context['fasta_source'], user=context['user'])
     return render(request, 'find/query.html', context)
