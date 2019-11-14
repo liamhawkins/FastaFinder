@@ -1,3 +1,5 @@
+{%  load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'find/style.css' %}">
 {% if is_genome %}
     <p>Genomes are not supported yet :(</p>
 {% elif not raw_query or fasta_source is None %}
