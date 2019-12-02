@@ -44,3 +44,6 @@ Tests can be run using the Django test runner
 ```bash
 >>> python manage.py test
 ```
+
+## LICENSE
+[Link](https://choosealicense.com/licenses/mit/)
