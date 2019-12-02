@@ -38,3 +38,9 @@ Currently the following accessions are supported:
 | NCBI Refseq | NP_001243728.1 |
 | MirBase ID | MI0000060 |
 | MicroRNA name | hsa-let-7a-1 |
+
+## Test
+Tests can be run using the Django test runner
+```bash
+>>> python manage.py test
+```
