@@ -27,6 +27,7 @@ You can directly query an accession by appending it to the url
 `http://127.0.0.1:8000/P04797`
 
 Which returns the Uniprot Human GAPDH Fasta sequence! Cool!
+![Screenshot](./screenshot.png?raw=true)
 
 ## Supported Accession IDs
 Currently the following accessions are supported:
