@@ -32,11 +32,8 @@ class Uniprot:
 
     @classmethod
     def get(cls, accession=None, fasta_source=None):
-        if fasta_source:
-            url = fasta_source.url
-        else:
-            url = cls.URL.format(accession)
-        response = requests.get(url, headers=headers)
+        url = fasta_source.url if fasta_source else cls.URL.format(accession)
+        response = requests.get(url, headers=headers, verify=False)
         if response.status_code == 404:
             raise SequenceNotFoundError("No sequence found in Uniprot: {}".format(accession))
         else:
@@ -64,10 +61,10 @@ class NCBI:
             url = fasta_source.url
         else:
             url = cls.URL.format('protein', accession)
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, verify=False)
         if response.status_code in [404, 400]:
             url = cls.URL.format('nuccore', accession)
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, verify=False)
             if response.status_code in [404, 400]:
                 raise SequenceNotFoundError("No sequence found in Uniprot: {}".format(accession))
 
@@ -90,11 +87,8 @@ class Mirbase:
 
     @classmethod
     def get(cls, accession=None, fasta_source=None):
-        if fasta_source:
-            url = fasta_source.url
-        else:
-            url = cls.URL.format(accession)
-        response = requests.get(url, headers=headers)
+        url = fasta_source.url if fasta_source else cls.URL.format(accession)
+        response = requests.get(url, headers=headers, verify=False)
         content = response.content.decode('utf-8').split('\n')
         if content == '':
             raise SequenceNotFoundError('No sequence found in MirBase: {}'.format(accession))
