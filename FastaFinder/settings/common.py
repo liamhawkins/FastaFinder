@@ -20,12 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 't$w1k-eh#t4em&le3z7foa@c9d15+#y91dl^+gdq(2$f4xgc+_'
+# SECRET_KEY = 't$w1k-eh#t4em&le3z7foa@c9d15+#y91dl^+gdq(2$f4xgc+_'
+SECRET_KEY = os.environ.get("FF_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['findfasta.herokuapp.com']
 
 
 # Application definition
