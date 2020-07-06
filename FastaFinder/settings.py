@@ -28,8 +28,11 @@ SECRET_KEY = os.environ.get("FF_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("FF_DEBUG") == "True"
 
-ALLOWED_HOSTS = ['findfasta.herokuapp.com']
+IS_HEROKU = os.environ.get("FF_IS_HEROKU", False) == "True"
 
+ALLOWED_HOSTS = []
+if IS_HEROKU:
+    ALLOWED_HOSTS.append('findfasta.herokuapp.com')
 
 # Application definition
 
@@ -126,4 +129,5 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+if IS_HEROKU:
+    django_heroku.settings(locals())
