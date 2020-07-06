@@ -1,7 +1,9 @@
 {%  load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
-<p>Usage: findfasta.herokuapp.com/&ltINSERT QUERY HERE&gt</p>
-<form id="form">
-   <input onchange="document.getElementById('form').action = '/'.concat(value);">
-   <input type="submit" value="Find Fasta!">
-</form>
+<div class="content">
+   <p>Usage: findfasta.herokuapp.com/&ltINSERT QUERY HERE&gt</p>
+   <form id="form">
+      <input onchange="document.getElementById('form').action = '/'.concat(value);">
+      <input type="submit" value="Find Fasta!">
+   </form>
+</div>

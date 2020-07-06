@@ -65,8 +65,8 @@ class NCBI:
         if response.status_code in [404, 400]:
             url = cls.URL.format('nuccore', accession)
             response = requests.get(url, headers=headers, verify=False)
-            if response.status_code in [404, 400]:
-                raise SequenceNotFoundError("No sequence found in Uniprot: {}".format(accession))
+        if response.status_code in [404, 400]:
+            raise SequenceNotFoundError("No sequence found in Uniprot: {}".format(accession))
 
         content = response.content.decode("utf-8").split("\n")
         description = content[0]

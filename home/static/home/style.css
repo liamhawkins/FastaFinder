@@ -1,4 +1,11 @@
+body {
+    text-align: center;
+}
+
+.content {
+    margin-top: 100px;
+}
+
 p {
     font-size: xx-large;
 }
-

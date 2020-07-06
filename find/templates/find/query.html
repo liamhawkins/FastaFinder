@@ -7,7 +7,7 @@
 {% elif fasta_source is None %}
     <p>No sequence available!</p>
 {% else %}
-    <div>
+    <div class="content">
         <a href="{{ fasta_source.url }}"><h4>Source</h4></a>
         <h4>Fasta:</h4>
         <textarea class="fastaTextArea" rows="10" cols="80">{{ description }}&#10;{{ sequence }}</textarea>
