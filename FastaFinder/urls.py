@@ -18,7 +18,7 @@ from django.urls import path, include, re_path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^(?P<raw_query>[0-9a-zA-Z._-]{3,15})', include('find.urls')),
+    re_path(r'^(?P<raw_query>[0-9a-zA-Z._-]{3,25})', include('find.urls')),
     re_path(r'^$', include('home.urls')),
     re_path(r'.*', include('find.urls'))
 ]

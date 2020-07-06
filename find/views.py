@@ -35,6 +35,7 @@ def get_fasta(query):
             return source.get(accession=query, fasta_source=fasta_source)
     raise NoMatchingSourceError("No source matches query: {}".format(query))
 
+
 def query(request, raw_query=None):
     context = {
         'user': log_user(request),

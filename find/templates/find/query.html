@@ -2,7 +2,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'find/style.css' %}">
 {% if is_genome %}
     <p>Genomes are not supported yet :(</p>
-{% elif not raw_query or fasta_source is None %}
+{% elif not raw_query %}
+    <p>Invalid query!</p>
+{% elif fasta_source is None %}
     <p>No sequence available!</p>
 {% else %}
     <div>
