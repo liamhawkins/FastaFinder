@@ -10,8 +10,15 @@ django.setup()
 
 from find.models import MicroRNAAlias
 
+FORCE = os.environ.get("FF_FORCE_UPDATE_MICRORNA_ALIASES", False) == "True"
 
-def update_microrna_aliases():
+
+def update_microrna_aliases(force_update=FORCE):
+    if MicroRNAAlias.objects.count() != 0 and not force_update:
+        print("Skipping microRNA aliases update, set FF_FORCE_UPDATE_MICRORNA_ALIASES=\"True\" to force update")
+        return
+
+    print("Updating microRNA aliases")
     mysock = urlopen('ftp://mirbase.org/pub/mirbase/CURRENT/aliases.txt.zip')
 
     memfile = io.BytesIO(mysock.read())
